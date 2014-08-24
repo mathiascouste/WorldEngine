@@ -1,5 +1,7 @@
 package model.world;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.Random;
 
 public class Area {
@@ -72,6 +74,33 @@ public class Area {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public void draw(Graphics g) {
+		int size = 10;
+		for(int x = 0 ; x < SIZE ; x++) {
+			for(int y = 0 ; y < SIZE ; y++) {
+				int ground = this.grid[x][y];
+				switch(ground) {
+				case Ground.EARTH:
+					g.setColor(Color.ORANGE);
+					break;
+				case Ground.GRASS:
+					g.setColor(Color.GREEN);
+					break;
+				case Ground.ROCK:
+					g.setColor(Color.GRAY);
+					break;
+				case Ground.SAND:
+					g.setColor(Color.YELLOW);
+					break;
+				case Ground.WATER:
+					g.setColor(Color.BLUE);
+					break;
+				}
+				g.fillRect(x*size, y*size, size, size);
+			}
 		}
 	}
 }
