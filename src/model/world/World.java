@@ -2,6 +2,9 @@ package model.world;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import model.WorldGenerator;
 
 public class World {
 
@@ -22,13 +25,26 @@ public class World {
 				this.areas.add(new Area(w * Area.SIZE, h * Area.SIZE));
 			}
 		}
+		new WorldGenerator(this).generateMap();
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+	public double getArridity(int x, int y) {
+		return 1-getHumidity(x, y);
+	}
 
+	public double getHumidity(int x, int y) {
+		int radius = 10;
+		double arridity = 0;
+		for(int i  = (int) (x - radius) ; i  < x + radius ; i++) {
+			for(int j = (int) (y - radius) ; j < y + radius ; j++) {
+				if(getGround(i,j) == Ground.WATER) {
+					arridity += 1;
+				}
+			}
+		}
+		arridity /= Math.pow(2*radius, 2);
+		// TODO Auto-generated method stub
+		return arridity;
 	}
 
 	public List<Area> getAreas() {
@@ -51,6 +67,10 @@ public class World {
 		} else {
 			return -1;
 		}
+	}
+	public void setGround(double x, double y, int ground) {
+		Area area = this.getAreaPerPosition(x, y);
+		area.setGround(x, y, ground);
 	}
 	
 	public Area getCentralArea() {

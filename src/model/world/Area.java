@@ -7,6 +7,7 @@ import java.util.Random;
 public class Area {
 
 	public static final int SIZE = 100;
+	public static final int SCALE = 10;
 	private int posX;
 	private int posY;
 	private int grid[][];
@@ -59,13 +60,13 @@ public class Area {
 		}
 	}
 	
-	public void setGround(int x, int y, int ground) throws Exception{
-		if(this.grid != null) {
-			if(ground < 0 || ground >= Ground.getElementsCount()) {
-			} else {
-				this.grid[x][y] = ground;
+	public void setGround(double x, double y, int ground) {
+		if(this.isInside(x, y)) {
+			if(this.grid != null) {
+				int px = (int) (x-this.posX);
+				int py = (int) (y-this.posY);
+				this.grid[px][py] = ground;
 			}
-		} else {
 		}
 	}
 
@@ -78,7 +79,7 @@ public class Area {
 	}
 
 	public void draw(Graphics g) {
-		int size = 10;
+		int size = SCALE;
 		for(int x = 0 ; x < SIZE ; x++) {
 			for(int y = 0 ; y < SIZE ; y++) {
 				int ground = this.grid[x][y];

@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
@@ -41,7 +42,7 @@ public class AreaPanel extends JPanel implements MouseMotionListener, MouseWheel
 	public void paint(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		g2.scale(scale, scale);
-		g2.translate(-this.offsetX/this.scale, -this.offsetY/this.scale);
+		g2.translate(-this.offsetX, -this.offsetY);
 		this.area.draw(g);
 	}
 	
@@ -58,12 +59,16 @@ public class AreaPanel extends JPanel implements MouseMotionListener, MouseWheel
 			double maxScale = 16;
 			if(scale < maxScale) {
 				this.scale *= Math.pow(2,scroll);
+				this.offsetX *= Math.pow(2,scroll);
+				this.offsetY *= Math.pow(2,scroll);
 			}
 		}
 		if(scroll < 0) {
 			double minScale = 1.0/2.0;
 			if(scale > minScale) {
 				this.scale *= Math.pow(2,scroll);
+				this.offsetX *= Math.pow(2,scroll);
+				this.offsetY *= Math.pow(2,scroll);
 			}
 		}
 	}
@@ -111,16 +116,16 @@ public class AreaPanel extends JPanel implements MouseMotionListener, MouseWheel
 	}
 	private void doOffsets() {
 		if(this.top && offsetY >= OFFSET) {
-			offsetY -= OFFSET;
+			offsetY -= OFFSET/this.scale;
 		}
 		if(this.bottom && offsetY <= SIZE-OFFSET) {
-			offsetY += OFFSET;
+			offsetY += OFFSET/this.scale;
 		}
 		if(this.left && offsetX >= OFFSET) {
-			offsetX -= OFFSET;
+			offsetX -= OFFSET/this.scale;
 		}
 		if(this.right && offsetX <= SIZE-OFFSET) {
-			offsetX += OFFSET;
+			offsetX += OFFSET/this.scale;
 		}
 	}
 }
