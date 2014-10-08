@@ -6,6 +6,8 @@ import model.world.Area;
 import model.world.World;
 
 public class MainFrame extends JFrame {
+	private static final long serialVersionUID = 1L;
+	
 	private World world;
 	private Area currentArea;
 	private AreaPanel areaPanel;
@@ -57,7 +59,7 @@ public class MainFrame extends JFrame {
 		fen.start();
 	}
 
-	private void start() {
+	public void start() {
 		Thread thread = new Thread(this.areaPanel);
 		thread.run();
 	}

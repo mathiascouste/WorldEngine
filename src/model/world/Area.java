@@ -2,7 +2,11 @@ package model.world;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+
+import model.world.entity.Entity;
 
 public class Area {
 
@@ -11,12 +15,16 @@ public class Area {
 	private int posX;
 	private int posY;
 	private int grid[][];
+	private List<Entity> entities;
+	private World world;
 
-	public Area() {
-		this(0, 0);
+	public Area(World world) {
+		this(world, 0, 0);
 	}
 
-	public Area(int posX, int posY) {
+	public Area(World world, int posX, int posY) {
+		this.world = world;
+		this.entities = new ArrayList<Entity>();
 		this.grid = new int[SIZE][SIZE];
 		this.posX = posX;
 		this.posY = posY;
@@ -103,5 +111,71 @@ public class Area {
 				g.fillRect(x*size, y*size, size, size);
 			}
 		}
+		this.drawEntities(g);
+	}
+
+	private boolean lock = false;
+	public synchronized void lock() {
+		if(lock) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		this.lock = true;
+	}
+	public synchronized void unlock() {
+		this.lock = false;
+		this.notify();
+	}
+	public synchronized void drawEntities(Graphics g) {
+		lock();
+		for(Entity e : this.entities) {
+			e.draw(g);
+		}
+		unlock();
+	}
+	public synchronized void addEntity(Entity entity) {
+		lock();
+		this.entities.add(entity);
+		unlock();
+	}
+	public synchronized void removeEntity(Entity entity) {
+		lock();
+		this.entities.remove(entity);
+		unlock();
+	}
+	
+	public List<Entity> getEntities() {
+		return entities;
+	}
+
+	public void setEntities(List<Entity> entities) {
+		this.entities = entities;
+	}
+
+	public int[][] getGrid() {
+		return grid;
+	}
+
+	public void setGrid(int[][] grid) {
+		this.grid = grid;
+	}
+
+	public World getWorld() {
+		return world;
+	}
+
+	public void setWorld(World world) {
+		this.world = world;
+	}
+
+	public static int getSize() {
+		return SIZE;
+	}
+
+	public static int getScale() {
+		return SCALE;
 	}
 }
