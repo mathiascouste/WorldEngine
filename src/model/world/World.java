@@ -5,8 +5,8 @@ import java.util.List;
 
 import view.tools.WELogger;
 
-import model.WorldGenerator;
 import model.world.entity.Entity;
+import model.world.generator.WorldGenerator;
 
 public class World {
 

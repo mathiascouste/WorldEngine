@@ -1,4 +1,4 @@
-package model;
+package model.world.generator;
 
 import java.util.Random;
 
