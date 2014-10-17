@@ -4,6 +4,7 @@ import view.MainFrame;
 import view.tools.ImageManager;
 import model.world.Area;
 import model.world.World;
+import model.world.generator.WorldGenerator;
 
 public class WorldTest {
 
@@ -15,6 +16,8 @@ public class WorldTest {
 
         World world = new World(1, 1);
         world.printInfo();
+        WorldGenerator wG = new WorldGenerator(world);
+        wG.generateMap();
 
         MainFrame fen = new MainFrame();
         Area a = world.getCentralArea();

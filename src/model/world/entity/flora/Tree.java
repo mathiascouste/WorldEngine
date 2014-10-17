@@ -11,7 +11,7 @@ import model.world.Ground;
 import model.world.entity.Entity;
 
 public class Tree extends Entity {
-    private static final double LIFEEXPECTANCY = 10.0;
+    private static final double LIFEEXPECTANCY = 100.0;
 
     public Tree() {
         this(null);
@@ -50,7 +50,7 @@ public class Tree extends Entity {
     }
 
     private void reproducing() {
-        if (new Random().nextDouble() < 0.8) {
+        if (new Random().nextDouble() < 0.98) {
             return;
         }
         Area a;

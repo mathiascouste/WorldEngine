@@ -3,9 +3,12 @@ package model.world;
 import java.util.ArrayList;
 import java.util.List;
 
+import config.GenConfig;
+
 import view.tools.WELogger;
 
 import model.world.entity.Entity;
+import model.world.generator.Calque;
 import model.world.generator.WorldGenerator;
 
 public class World {
@@ -80,6 +83,15 @@ public class World {
         }
     }
 
+    public int getAltitude(double x, double y) {
+        Area area = this.getAreaPerPosition(x, y);
+        if (area != null) {
+            return area.getAltitude(x, y);
+        } else {
+            return 0;
+        }
+    }
+
     public void setGround(double x, double y, int ground) {
         Area area = this.getAreaPerPosition(x, y);
         area.setGround(x, y, ground);
@@ -118,4 +130,56 @@ public class World {
         WELogger.log(entityCount + " entity(ies) in this world !");
     }
 
+    public void applyRelief(Calque relief) {
+        for (Area a : this.areas) {
+            int posX = a.getPosX(), posY = a.getPosY();
+            int[][] areaRelief = a.getRelief();
+            for (int x = posX; x < posX + Area.SIZE; x++) {
+                for (int y = posY; y < posY + Area.SIZE; y++) {
+                    areaRelief[x - posX][y - posY] = relief.getV()[x][y];
+                }
+            }
+        }
+        this.defineGround();
+    }
+
+    private void defineGround() {
+        for (int x = 0; x < this.width * Area.SIZE; x++) {
+            for (int y = 0; y < this.height * Area.SIZE; y++) {
+                if (this.getAltitude(x, y) <= GenConfig.SEALEVEL) {
+                    this.setGround(x, y, Ground.WATER);
+                } else {
+                    int alt = getAltitude(x, y);
+                    int penteX = 0;
+                    int penteY = 0;
+                    if (x == 0) {
+                        penteX = alt - getAltitude(x + 1, y);
+                        penteX *= 2;
+                    } else if (x == this.width * Area.SIZE) {
+                        penteX = alt - getAltitude(x - 1, y);
+                        penteX *= 2;
+                    } else {
+                        penteX = getAltitude(x + 1, y) - getAltitude(x - 1, y);
+                    }
+                    if (y == 0) {
+                        penteY = alt - getAltitude(x, y + 1);
+                        penteY *= 2;
+                    } else if (y == this.height * Area.SIZE) {
+                        penteX = alt - getAltitude(x, y - 1);
+                        penteX *= 2;
+                    } else {
+                        penteX = getAltitude(x, y + 1) - getAltitude(x, y - 1);
+                    }
+                    penteX = Math.abs(penteX);
+                    penteY = Math.abs(penteY);
+                    int pente = (int) (penteX / 2f + penteY / 2f);
+                    if (pente < 10) {
+                        this.setGround(x, y, Ground.EARTH);
+                    } else {
+                        this.setGround(x, y, Ground.ROCK);
+                    }
+                }
+            }
+        }
+    }
 }

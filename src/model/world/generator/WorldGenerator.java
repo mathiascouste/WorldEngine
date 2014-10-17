@@ -18,15 +18,20 @@ public class WorldGenerator {
 
     public WorldGenerator(World world) {
         this.world = world;
+        this.seed = new Random().nextLong();
     }
 
     public void generateMap() {
-        this.seed = new Random().nextLong();
+        this.generateMap(new Random().nextLong());
+    }
+
+    public void generateMap(long seed) {
         this.rand = new Random(this.seed);
 
-        int size = this.world.getWidth();
+        int size = this.world.getWidth() * Area.SIZE;
         this.relief = new ReliefGenerator(5, 4, 0.5f, 4, size).generateRelief();
-        this.water = new HydroGenerator(this.relief, rand).generateHydro();
+
+        this.world.applyRelief(this.relief);
 
         this.generateEntity(rand);
     }

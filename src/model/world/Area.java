@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import config.GenConfig;
+
 import view.tools.WELogger;
 
 import model.world.entity.Entity;
@@ -16,10 +18,12 @@ public class Area {
     public static final int SCALE = 10;
     private int posX;
     private int posY;
-    private int[][] grid;
     private List<Entity> entities;
     private World world;
     private boolean lock = false;
+
+    private int[][] grid;
+    private int[][] relief;
 
     public Area(World world) {
         this(world, 0, 0);
@@ -38,6 +42,7 @@ public class Area {
                         .getElementsCount());
             }
         }
+        this.relief = new int[SIZE][SIZE];
     }
 
     public int getPosX() {
@@ -71,6 +76,20 @@ public class Area {
         }
     }
 
+    public int getAltitude(double x, double y) {
+        if (this.isInside(x, y)) {
+            if (this.grid != null) {
+                int px = (int) (x - this.posX);
+                int py = (int) (y - this.posY);
+                return this.relief[px][py];
+            } else {
+                return -1;
+            }
+        } else {
+            return 0;
+        }
+    }
+
     public void setGround(double x, double y, int ground) {
         if (this.grid != null && this.isInside(x, y)) {
             int px = (int) (x - this.posX);
@@ -88,22 +107,26 @@ public class Area {
         int size = SCALE;
         for (int x = 0; x < SIZE; x++) {
             for (int y = 0; y < SIZE; y++) {
+                g.setColor(Color.WHITE);
+                g.fillRect(x * size, y * size, size, size);
+                
+                int transparency = 255-120*this.relief[x][y]/GenConfig.MAX_HEIGHT;
                 int ground = this.grid[x][y];
                 switch (ground) {
                 case Ground.EARTH:
-                    g.setColor(Color.ORANGE);
+                    g.setColor(new Color(200, 180, 90,transparency));
                     break;
                 case Ground.GRASS:
-                    g.setColor(Color.GREEN);
+                    g.setColor(new Color(0,255,0,transparency));
                     break;
                 case Ground.ROCK:
-                    g.setColor(Color.GRAY);
+                    g.setColor(new Color(255/3,255/3,255/3,transparency));
                     break;
                 case Ground.SAND:
                     g.setColor(Color.YELLOW);
                     break;
                 case Ground.WATER:
-                    g.setColor(Color.BLUE);
+                    g.setColor(new Color(0,0,255,transparency));
                     break;
                 default:
                     g.setColor(Color.GRAY);
@@ -180,5 +203,21 @@ public class Area {
 
     public static int getScale() {
         return SCALE;
+    }
+
+    public boolean isLock() {
+        return lock;
+    }
+
+    public void setLock(boolean lock) {
+        this.lock = lock;
+    }
+
+    public int[][] getRelief() {
+        return relief;
+    }
+
+    public void setRelief(int[][] relief) {
+        this.relief = relief;
     }
 }
