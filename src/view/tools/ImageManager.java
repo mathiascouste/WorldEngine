@@ -12,26 +12,6 @@ import javax.imageio.ImageIO;
 
 public class ImageManager {
     private static Map<String, ImageManager> imageManagers = new HashMap<String, ImageManager>();
-
-    public static ImageManager createImageManager(String ident) {
-        ImageManager iM = new ImageManager(ident);
-        imageManagers.put(ident, iM);
-        return iM;
-    }
-
-    public static ImageManager get(String ident) {
-        return imageManagers.get(ident);
-    }
-
-    public static Image getImage(String ident, String img) {
-        ImageManager iM = get(ident);
-        if (iM == null) {
-            return null;
-        } else {
-            return iM.getImage(img);
-        }
-    }
-
     private Map<String, String> imagesPath;
     private Map<String, Image> images;
 
@@ -57,7 +37,7 @@ public class ImageManager {
             String ident = pairs.getKey();
             String path = pairs.getValue();
             this.images.put(ident, loadImage(path));
-            it.remove(); // avoids a ConcurrentModificationException
+            it.remove();
         }
     }
 
@@ -66,8 +46,27 @@ public class ImageManager {
         try {
             img = ImageIO.read(new File(path));
         } catch (IOException e) {
-            WELogger.log(e.getMessage());
+            WELogger.log(e);
         }
         return img;
+    }
+
+    public static ImageManager createImageManager(String ident) {
+        ImageManager iM = new ImageManager(ident);
+        imageManagers.put(ident, iM);
+        return iM;
+    }
+
+    public static ImageManager get(String ident) {
+        return imageManagers.get(ident);
+    }
+
+    public static Image getImage(String ident, String img) {
+        ImageManager iM = get(ident);
+        if (iM == null) {
+            return null;
+        } else {
+            return iM.getImage(img);
+        }
     }
 }

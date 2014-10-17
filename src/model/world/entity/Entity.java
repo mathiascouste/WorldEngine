@@ -121,8 +121,5 @@ public abstract class Entity implements Runnable {
         this.age = age;
     }
 
-    public void draw(Graphics g) {
-        // TODO Auto-generated method stub
-
-    }
+    public abstract void draw(Graphics g);
 }

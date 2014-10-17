@@ -21,7 +21,7 @@ public class ReliefGenerator {
     public Calque generateRelief() {
         this.calque = new Calque(taille, 1);
 
-        Calque.generer_calque(this.frequence, this.octave, this.persistance,
+        Calque.genererCalque(this.frequence, this.octave, this.persistance,
                 this.lissage, this.calque);
 
         return this.calque;

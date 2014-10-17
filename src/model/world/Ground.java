@@ -8,11 +8,10 @@ public final class Ground {
     public static final int GRASS = 3;
     public static final int SAND = 4;
 
-    public static int getElementsCount() {
-        return 5;
-    }
-    
     private Ground() {
     }
 
+    public static int getElementsCount() {
+        return 5;
+    }
 }

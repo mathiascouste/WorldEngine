@@ -5,6 +5,10 @@ import model.world.entity.flora.Tree;
 import model.world.entity.Entity;
 
 public class EntityTest {
+
+    private EntityTest() {
+    }
+
     public static void main(String[] args) {
         Entity ent = new Tree();
         ent.born();
@@ -14,8 +18,5 @@ public class EntityTest {
             WELogger.log(e.getMessage());
         }
         ent.die();
-    }
-
-    private EntityTest() {
     }
 }

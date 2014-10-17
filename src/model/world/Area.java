@@ -19,6 +19,7 @@ public class Area {
     private int[][] grid;
     private List<Entity> entities;
     private World world;
+    private boolean lock = false;
 
     public Area(World world) {
         this(world, 0, 0);
@@ -112,8 +113,6 @@ public class Area {
         }
         this.drawEntities(g);
     }
-
-    private boolean lock = false;
 
     public synchronized void lock() {
         if (lock) {

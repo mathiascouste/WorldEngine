@@ -55,7 +55,6 @@ public class World {
             }
         }
         arridity /= Math.pow(2 * radius, 2);
-        // TODO Auto-generated method stub
         return arridity;
     }
 
