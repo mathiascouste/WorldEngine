@@ -7,6 +7,8 @@ import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import config.GenConfig;
+
 import model.world.generator.Calque;
 import model.world.generator.HydroGenerator;
 import model.world.generator.ReliefGenerator;
@@ -60,7 +62,9 @@ public class ReliefGeneratorTest extends JFrame {
      */
     public static void main(String[] args) {
 
-        ReliefGenerator rG = new ReliefGenerator(5, 4, 0.5f, 4, size);
+        ReliefGenerator rG = new ReliefGenerator(GenConfig.FREQUENCE,
+                GenConfig.OCTAVE, GenConfig.PERSISTANCE, GenConfig.LISSAGE,
+                size);
 
         Calque calque = rG.generateRelief();
 

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Calque {
-    private static final int MAX_HEIGHT = 256;
+import config.GenConfig;
 
+public class Calque {
     private int[][] v;
     private int taille;
     private float persistance;
@@ -29,7 +29,7 @@ public class Calque {
     public void randomize() {
         for (int i = 0; i < this.taille; i++) {
             for (int j = 0; j < this.taille; j++) {
-                this.v[i][j] = (int) (new Random().nextDouble() * MAX_HEIGHT);
+                this.v[i][j] = (int) (new Random().nextDouble() * GenConfig.MAX_HEIGHT);
             }
         }
     }

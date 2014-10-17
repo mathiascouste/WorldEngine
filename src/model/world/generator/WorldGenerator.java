@@ -2,6 +2,8 @@ package model.world.generator;
 
 import java.util.Random;
 
+import config.GenConfig;
+
 import model.world.Area;
 import model.world.Ground;
 import model.world.World;
@@ -40,7 +42,7 @@ public class WorldGenerator {
     }
 
     private void generateTree(Random rand, Area a) {
-        int maxTree = 100;
+        int maxTree = GenConfig.MAX_TREE;
         int posX = a.getPosX(), posY = a.getPosY();
         int cptOkGround = 0;
         for (int x = posX; x < Area.SIZE + posX; x++) {

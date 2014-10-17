@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import config.GenConfig;
+
 public class HydroGenerator {
-    private static final int SEALEVEL = 80;
-    private static final int SOURCEABONDANCE = 10;
     private Calque relief;
     private Calque hydro;
     private Random rand;
@@ -40,8 +40,8 @@ public class HydroGenerator {
     private void placeOcean() {
         for(int i = 0 ; i < this.taille ; i++) {
             for(int j = 0 ; j < this.taille ; j++) {
-                if(this.relief.getV()[i][j] <= SEALEVEL ) {
-                    this.hydro.getV()[i][j] = SEALEVEL;
+                if(this.relief.getV()[i][j] <= GenConfig.SEALEVEL ) {
+                    this.hydro.getV()[i][j] = GenConfig.SEALEVEL;
                 } else {
                     this.hydro.getV()[i][j] = -1;
                 }
@@ -50,7 +50,7 @@ public class HydroGenerator {
     }
 
     private void placeSources() {
-        int nSource = SOURCEABONDANCE;
+        int nSource = GenConfig.SOURCEABONDANCE;
         int x, y;
         while(nSource!=0) {
             x = rand.nextInt(this.taille);
