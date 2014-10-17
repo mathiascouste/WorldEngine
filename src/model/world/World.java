@@ -35,6 +35,7 @@ public class World {
 
     public void start() {
         for (Area a : this.areas) {
+            new Thread(a).start();
             a.lock();
             for (Entity e : a.getEntities()) {
                 e.born();
@@ -139,6 +140,8 @@ public class World {
                     areaRelief[x - posX][y - posY] = relief.getV()[x][y];
                 }
             }
+            a.calculateMaxHeight();
+            a.calculateMinHeight();
         }
         this.defineGround();
     }

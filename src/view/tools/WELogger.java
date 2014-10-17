@@ -24,4 +24,9 @@ public class WELogger {
         LOGGER.setLevel(Level.INFO);
         LOGGER.info(e.getMessage());
     }
+
+    public static void log(InterruptedException e) {
+        LOGGER.setLevel(Level.INFO);
+        LOGGER.info(e.getMessage());
+    }
 }

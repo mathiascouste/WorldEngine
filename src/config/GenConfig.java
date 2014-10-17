@@ -16,6 +16,9 @@ public class GenConfig {
     /// Flora
     public static final int MAX_TREE = 100;
     
+    /// Area
+    public static final int AREA_DELAY = 10000;
+    
     private GenConfig() {
     }
 }
