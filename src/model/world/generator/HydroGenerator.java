@@ -67,7 +67,6 @@ public class HydroGenerator {
     }
 
     private void startRain() {
-        System.out.println("Start rain");
         for (int i = 0; i < this.taille; i++) {
             for (int j = 0; j < this.taille; j++) {
                 this.rain.getV()[i][j] = 10;
@@ -109,10 +108,8 @@ public class HydroGenerator {
     }
 
     private void startFlow() {
-        System.out.println("Start flow");
         Source s = null;
         while (!this.activeSources.isEmpty()) {
-            // System.out.println("N=" + this.activeSources.size());
             s = this.activeSources.remove(this.activeSources.size() - 1);
 
             Point north = new Point(s.getX(), s.getY() + 1), south = new Point(
@@ -128,7 +125,6 @@ public class HydroGenerator {
                     this.activeSources.add(new Source(s.getX(), s.getY(), s
                             .getZ() - 1));
                 }
-            } else if (Source.getSource(down.x, down.y, s.getZ() - 1) != null) {
             } else {
                 filledSide = 0;
                 if (isInWorld(north) && s.getZ() >= getAltitude(north)
@@ -168,14 +164,10 @@ public class HydroGenerator {
                 }
 
                 // Code correspondant au remplissement d'un bassin
-                if (filledSide == 4) { //
-                    System.out.println("NEED TO ACT SOU ?"); // Vérifier cube au
-                                                             // dessus
+                if (filledSide == 4) {
                     if (sourceExists(up, getAltitude(up) + 1)) {
-                        System.out.println("EXIST : OK");
                         this.activateSource(up.x, up.y, getAltitude(up) + 1);
                     } else {
-                        System.out.println("EXIST : NOK");
                         this.activeSources.add(new Source(up.x, up.y,
                                 getAltitude(up) + 1));
                         this.hydro.getV()[up.x][up.y] = getAltitude(up) + 1;
@@ -191,11 +183,9 @@ public class HydroGenerator {
     }
 
     private void activateSource(int x, int y, int z) {
-        System.out.println("ACT SOU");
         Source theSource = null;
         for (Source s : this.passiveSources) {
             if (s.isHere(x, y, z)) {
-                System.out.println("Source finded");
                 theSource = s;
                 break;
             }
@@ -207,12 +197,7 @@ public class HydroGenerator {
     }
 
     private boolean isInWorld(Point p) {
-        if (p.x < 0 || p.y < 0 || p.x > this.taille - 1
-                || p.y > this.taille - 1) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(p.x < 0 || p.y < 0 || p.x > this.taille - 1 || p.y > this.taille - 1);
     }
 
     private boolean sourceExists(Point p, int altitude) {

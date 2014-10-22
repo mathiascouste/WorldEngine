@@ -26,4 +26,30 @@ public class ReliefGenerator {
 
         return this.calque;
     }
+
+    public static void applyPyramid(Calque relief) {
+        int size = relief.getTaille();
+        for (int i = 0; i < size; i++) {
+            for (int y = 0; y < size; y++) {
+                double coef = 2 * (double) i / (double) size;
+                if (i < size / 2) {
+                    relief.getV()[i][y] *= coef;
+                } else if (i > size / 2) {
+
+                    relief.getV()[i][y] /= coef;
+                }
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            for (int y = 0; y < size; y++) {
+                double coef = 2 * (double) i / (double) size;
+                if (i < size / 2) {
+                    relief.getV()[y][i] *= coef;
+                } else if (i > size / 2) {
+
+                    relief.getV()[y][i] /= coef;
+                }
+            }
+        }
+    }
 }

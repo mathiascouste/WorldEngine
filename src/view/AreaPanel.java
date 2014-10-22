@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 import view.tools.WELogger;
 
-import model.world.Area;
+import model.world.area.EntityArea;
 
 public class AreaPanel extends JPanel implements MouseMotionListener,
         MouseWheelListener, Runnable {
@@ -23,7 +23,7 @@ public class AreaPanel extends JPanel implements MouseMotionListener,
     private static final int FPS = 50;
     private boolean top, left, bottom, right;
 
-    private Area area;
+    private EntityArea area;
     private int offsetX, offsetY;
     private double scale;
 
@@ -31,7 +31,7 @@ public class AreaPanel extends JPanel implements MouseMotionListener,
         this(null);
     }
 
-    public AreaPanel(Area area) {
+    public AreaPanel(EntityArea area) {
         this.area = area;
         this.setSize(500, 500);
         this.addMouseMotionListener(this);
@@ -51,11 +51,11 @@ public class AreaPanel extends JPanel implements MouseMotionListener,
         this.area.draw(g);
     }
 
-    public Area getArea() {
+    public EntityArea getArea() {
         return area;
     }
 
-    public void setArea(Area area) {
+    public void setArea(EntityArea area) {
         this.area = area;
     }
 

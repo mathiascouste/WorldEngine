@@ -4,12 +4,12 @@ import java.awt.Graphics;
 
 import view.tools.WELogger;
 
-import model.world.Area;
+import model.world.area.EntityArea;
 
 public abstract class Entity implements Runnable {
     protected double posX, posY, posZ;
     protected long delay;
-    protected Area area;
+    protected EntityArea area;
     protected boolean alive;
     protected Thread thread;
     protected double age;
@@ -81,11 +81,11 @@ public abstract class Entity implements Runnable {
         this.delay = delay;
     }
 
-    public Area getArea() {
+    public EntityArea getArea() {
         return area;
     }
 
-    public void setArea(Area area) {
+    public void setArea(EntityArea area) {
         this.area = area;
     }
 

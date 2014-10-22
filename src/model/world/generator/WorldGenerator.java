@@ -4,9 +4,9 @@ import java.util.Random;
 
 import config.GenConfig;
 
-import model.world.Area;
 import model.world.Ground;
 import model.world.World;
+import model.world.area.EntityArea;
 import model.world.entity.flora.Tree;
 
 public class WorldGenerator {
@@ -28,9 +28,9 @@ public class WorldGenerator {
     public void generateMap(long seed) {
         this.rand = new Random(this.seed);
 
-        int size = this.world.getWidth() * Area.SIZE;
+        int size = this.world.getWidth() * EntityArea.SIZE;
         this.relief = new ReliefGenerator(5, 4, 0.5f, 4, size).generateRelief();
-
+        //ReliefGenerator.applyPyramid(this.relief);
         this.world.applyRelief(this.relief);
 
         this.generateEntity(rand);
@@ -41,17 +41,17 @@ public class WorldGenerator {
     }
 
     private void generateFlora(Random rand) {
-        for (Area a : this.world.getAreas()) {
+        for (EntityArea a : this.world.getAreas()) {
             generateTree(rand, a);
         }
     }
 
-    private void generateTree(Random rand, Area a) {
+    private void generateTree(Random rand, EntityArea a) {
         int maxTree = GenConfig.MAX_TREE;
         int posX = a.getPosX(), posY = a.getPosY();
         int cptOkGround = 0;
-        for (int x = posX; x < Area.SIZE + posX; x++) {
-            for (int y = posY; y < Area.SIZE + posY; y++) {
+        for (int x = posX; x < EntityArea.SIZE + posX; x++) {
+            for (int y = posY; y < EntityArea.SIZE + posY; y++) {
                 int ground = a.getGround(x, y);
                 if (ground == Ground.EARTH || ground == Ground.GRASS) {
                     cptOkGround++;
@@ -59,8 +59,8 @@ public class WorldGenerator {
             }
         }
         double probaTree = ((double) maxTree) / ((double) cptOkGround);
-        for (int x = posX; x < Area.SIZE + posX; x++) {
-            for (int y = posY; y < Area.SIZE + posY; y++) {
+        for (int x = posX; x < EntityArea.SIZE + posX; x++) {
+            for (int y = posY; y < EntityArea.SIZE + posY; y++) {
                 int ground = a.getGround(x, y);
                 if ((ground == Ground.EARTH || ground == Ground.GRASS)
                         && rand.nextFloat() <= probaTree) {

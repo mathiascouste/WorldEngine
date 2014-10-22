@@ -14,4 +14,21 @@ public final class Ground {
     public static int getElementsCount() {
         return 5;
     }
+
+    public static double maxGroundWater(int g) {
+        switch (g) {
+        case EARTH:
+            return 1;
+        case WATER:
+            return 0;
+        case ROCK:
+            return 0;
+        case GRASS:
+            return 0.9;
+        case SAND:
+            return 1.3;
+        default:
+            return 0;
+        }
+    }
 }

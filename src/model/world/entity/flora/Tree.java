@@ -6,8 +6,8 @@ import java.util.Random;
 import view.tools.ImageManager;
 import view.tools.WELogger;
 
-import model.world.Area;
 import model.world.Ground;
+import model.world.area.EntityArea;
 import model.world.entity.Entity;
 
 public class Tree extends Entity {
@@ -17,11 +17,11 @@ public class Tree extends Entity {
         this(null);
     }
 
-    public Tree(Area area) {
+    public Tree(EntityArea area) {
         this(area, 0, 0, 0);
     }
 
-    public Tree(Area area, double posX, double posY, double posZ) {
+    public Tree(EntityArea area, double posX, double posY, double posZ) {
         this.area = area;
         this.posX = posX;
         this.posY = posY;
@@ -53,7 +53,7 @@ public class Tree extends Entity {
         if (new Random().nextDouble() < 0.98) {
             return;
         }
-        Area a;
+        EntityArea a;
         double newX;
         double newY;
         do {

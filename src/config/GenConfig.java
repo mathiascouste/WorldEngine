@@ -9,7 +9,7 @@ public class GenConfig {
     public static final float PERSISTANCE = 0.5f;
     
     // Hydro
-    public static final int SEALEVEL = 80;
+    public static final int SEALEVEL = 90;
     public static final int SOURCEABONDANCE = 2;
     
     //// World
@@ -17,7 +17,7 @@ public class GenConfig {
     public static final int MAX_TREE = 100;
     
     /// Area
-    public static final int AREA_DELAY = 10000;
+    public static final int AREA_DELAY = 2000;
     
     private GenConfig() {
     }

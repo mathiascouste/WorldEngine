@@ -2,14 +2,14 @@ package view;
 
 import javax.swing.JFrame;
 
-import model.world.Area;
 import model.world.World;
+import model.world.area.EntityArea;
 
 public class MainFrame extends JFrame {
     private static final long serialVersionUID = 1L;
 
     private World world;
-    private Area currentArea;
+    private EntityArea currentArea;
     private AreaPanel areaPanel;
 
     public MainFrame() {
@@ -20,6 +20,7 @@ public class MainFrame extends JFrame {
         this.setSize(500, 510);
 
         this.add(this.areaPanel);
+        
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
@@ -31,11 +32,11 @@ public class MainFrame extends JFrame {
         this.world = world;
     }
 
-    public Area getCurrentArea() {
+    public EntityArea getCurrentArea() {
         return currentArea;
     }
 
-    public void setCurrentArea(Area currentArea) {
+    public void setCurrentArea(EntityArea currentArea) {
         this.currentArea = currentArea;
         this.areaPanel.setArea(this.currentArea);
     }
@@ -51,7 +52,7 @@ public class MainFrame extends JFrame {
     public static void main(String[] args) {
         MainFrame fen = new MainFrame();
         World w = new World();
-        Area a = w.getCentralArea();
+        EntityArea a = w.getCentralArea();
         fen.setWorld(w);
         fen.setCurrentArea(a);
         fen.validate();
