@@ -138,6 +138,5 @@ public class ReliefArea extends Area {
                 g.fillRect(x * size, y * size, size, size);
             }
         }
-        System.out.println("Relief painted");
     }
 }

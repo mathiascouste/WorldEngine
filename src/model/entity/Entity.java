@@ -1,9 +1,10 @@
-package model.world.entity;
+package model.entity;
 
 import java.awt.Graphics;
 
 import view.tools.WELogger;
 
+import measure.ThreadsEfficiency;
 import model.world.area.EntityArea;
 
 public abstract class Entity implements Runnable {
@@ -29,15 +30,18 @@ public abstract class Entity implements Runnable {
     @Override
     public void run() {
         while (this.alive) {
-            this.action();
+            long start = System.currentTimeMillis();
 
-            long sleepTime = (long) (this.delay);
+            this.action();
+            
+            long elapsedTime = System.currentTimeMillis() - start;
+            long nextSleep = ThreadsEfficiency.measureNextSleep(delay, elapsedTime);
             try {
-                Thread.sleep(sleepTime);
+                Thread.sleep(nextSleep);
             } catch (InterruptedException e) {
                 WELogger.log(e.getMessage());
             }
-            this.age += sleepTime / 1000;
+            this.age += delay / 1000;
         }
         if (this.area != null) {
             this.area.removeEntity(this);

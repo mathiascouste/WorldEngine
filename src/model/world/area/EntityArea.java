@@ -1,6 +1,5 @@
 package model.world.area;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +8,9 @@ import config.GenConfig;
 
 import view.tools.WELogger;
 
-import model.world.Ground;
+import measure.ThreadsEfficiency;
+import model.entity.Entity;
 import model.world.World;
-import model.world.entity.Entity;
 
 public class EntityArea extends HydroArea implements Runnable {
     private List<Entity> entities;
@@ -27,47 +26,7 @@ public class EntityArea extends HydroArea implements Runnable {
     }
 
     public void draw(Graphics g) {
-        /*int size = SCALE;
-        for (int x = 0; x < SIZE; x++) {
-            for (int y = 0; y < SIZE; y++) {
-                g.setColor(Color.black);
-                g.fillRect(x * size, y * size, size, size);
-
-                int transparency = 255 * this.relief[x][y]
-                        / GenConfig.MAX_HEIGHT+255*(this.maxHeight/GenConfig.MAX_HEIGHT);
-                int ground = this.grid[x][y];
-                switch (ground) {
-                case Ground.EARTH:
-                    g.setColor(new Color(200, 180, 90, transparency));
-                    break;
-                case Ground.GRASS:
-                    g.setColor(new Color(0, 255, 0, transparency));
-                    break;
-                case Ground.ROCK:
-                    g.setColor(new Color(255 / 3, 255 / 3, 255 / 3,
-                            transparency));
-                    break;
-                case Ground.SAND:
-                    g.setColor(Color.YELLOW);
-                    break;
-                case Ground.WATER:
-                    g.setColor(new Color(0, 0, 255, transparency));
-                    break;
-                default:
-                    g.setColor(Color.GRAY);
-                }
-                g.fillRect(x * size, y * size, size, size);
-
-                int transp = (int) this.waterLevel[x][y];
-                if (transp > 255) {
-                    transp = 255;
-                }
-                g.setColor(new Color(0, 255, 0, transp));
-                g.fillRect(x * size, y * size, size, size);
-            }
-        }*/
         this.drawEntities(g);
-        System.out.println("Relief painted");
     }
 
     public synchronized void lock() {
@@ -87,7 +46,6 @@ public class EntityArea extends HydroArea implements Runnable {
     }
 
     public synchronized void drawEntities(Graphics g) {
-        System.out.println("Drawing entities ...");
         lock();
         for (Entity e : this.entities) {
             e.draw(g);
@@ -126,9 +84,15 @@ public class EntityArea extends HydroArea implements Runnable {
     @Override
     public void run() {
         while (true) {
+            long start = System.currentTimeMillis();
+            
             thingsWithHydro();
+            
+            
+            long elapsedTime = System.currentTimeMillis() - start;
+            long nextSleep = ThreadsEfficiency.measureNextSleep(GenConfig.AREA_DELAY, elapsedTime);
             try {
-                Thread.sleep(GenConfig.AREA_DELAY);
+                Thread.sleep(nextSleep);
             } catch (InterruptedException e) {
                 WELogger.log(e);
             }

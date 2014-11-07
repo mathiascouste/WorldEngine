@@ -6,6 +6,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import config.GenConfig;
+
 import model.world.Ground;
 import model.world.World;
 
@@ -20,9 +22,20 @@ public class HydroArea extends ReliefArea {
         super(world, posX, posY);
         this.waterLevel = new double[SIZE][SIZE];
         this.waterInGround = new double[SIZE][SIZE];
-        this.todayRain = 10;
-        this.remainRain = 10;
+        this.todayRain = 1;
+        this.remainRain = 1;
         this.nuage = 0;
+    }
+
+    public void applySeaLevel() {
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                if (this.relief[x][y] <= GenConfig.SEALEVEL) {
+                    this.waterLevel[x][y] = GenConfig.SEALEVEL
+                            - this.relief[x][y];
+                }
+            }
+        }
     }
 
     public void drawHydro(Graphics g) {
@@ -33,40 +46,32 @@ public class HydroArea extends ReliefArea {
                 if (this.waterLevel[x][y] < 1) {
                     transparency = (int) (255 * this.waterLevel[x][y]);
                 }
-                g.setColor(new Color(0, 255, 0, transparency));
+                g.setColor(new Color(0, 0, 255, transparency));
                 g.fillRect(x * size, y * size, size, size);
+                if (this.waterLevel[x][y] < 0) {
+                    transparency = (int) (255 * this.waterInGround[x][y] / Ground
+                            .maxGroundWater(this.grid[x][y]));
+                    g.setColor(new Color(255, 0, 0, transparency));
+                    g.fillRect(x * size, y * size, size, size);
+                }
             }
         }
-        System.out.println("Hydro painted");
     }
 
-    private void ecoulement(double[][] nextWaterLevel, int x, int y) {
-        int k = this.getAltitude(x, y);
-        Point north = new Point(x, y + 1);
-        Point south = new Point(x, y - 1);
-        Point east = new Point(x + 1, y);
-        Point west = new Point(x - 1, y - 1);
-        List<Point> pts = new ArrayList<Point>();
-        if (getWaterAltitude(north.x, north.y) < k) {
-            pts.add(north);
+    private void ecoulement() {
+        double[][] entree = new double[SIZE][SIZE];
+        double[][] sortie = new double[SIZE][SIZE];
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                EcoulementCalculeur calculeur = new EcoulementCalculeur(entree,
+                        sortie, x, y);
+                calculeur.calculate();
+            }
         }
-        if (getWaterAltitude(south.x, south.y) < k) {
-            pts.add(south);
-        }
-        if (getWaterAltitude(east.x, east.y) < k) {
-            pts.add(east);
-        }
-        if (getWaterAltitude(west.x, west.y) < k) {
-            pts.add(west);
-        }
-        int maxDiff = 0;
-        for (Point p : pts) {
-            maxDiff += k - getWaterAltitude(p.x, p.y);
-        }
-        for (Point p : pts) {
-            if (maxDiff != 0 && p.x >= 0 && p.x < SIZE && p.y >= 0
-                    && p.y < SIZE) {
-                nextWaterLevel[p.x][p.y] += this.waterLevel[x][y] / maxDiff;
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                this.waterLevel[x][y] += entree[x][y];
+                this.waterLevel[x][y] -= sortie[x][y];
             }
         }
     }
@@ -93,18 +98,39 @@ public class HydroArea extends ReliefArea {
         }
     }
 
-    private int getWaterAltitude(int x, int y) {
-        if (this.isInside(x, y)) {
-            if (this.grid != null) {
-                int px = (int) (x - this.posX);
-                int py = (int) (y - this.posY);
-                return (int) (this.relief[px][py] + this.waterLevel[px][py]);
-            } else {
-                return -1;
+    public double getAtmosphereWater() {
+        return this.nuage + this.remainRain * SIZE * SIZE;
+    }
+
+    public double getNuage() {
+        return this.nuage;
+    }
+
+    public double getUndergroundWater() {
+        double undergroundWater = 0;
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                undergroundWater += this.waterInGround[x][y];
             }
+        }
+        return undergroundWater;
+    }
+
+    public double getUppergroundWater() {
+        double uppergroundWater = 0;
+        for (int x = 0; x < SIZE; x++) {
+            for (int y = 0; y < SIZE; y++) {
+                uppergroundWater += this.waterLevel[x][y];
+            }
+        }
+        return uppergroundWater;
+    }
+
+    private double getWaterAltitude(int x, int y) {
+        if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) {
+            return GenConfig.MAX_HEIGHT;
         } else {
-            this.world.getAltitude(x + this.posX * SIZE, y + this.posY * SIZE);
-            return 0;
+            return this.relief[x][y] + this.waterLevel[x][y];
         }
     }
 
@@ -121,8 +147,7 @@ public class HydroArea extends ReliefArea {
         }
     }
 
-    protected void makeItWet() {
-        System.out.println("Remaining Rain = " + this.remainRain);
+    private void rain() {
         if (this.remainRain > 0) {
             double addo = this.todayRain / 50;
             this.remainRain -= addo;
@@ -132,31 +157,109 @@ public class HydroArea extends ReliefArea {
                 }
             }
         }
-        System.out.println("Water lvl in 50,50 = " + this.waterLevel[50][50]);
-        System.out.println("Remaining Rain = " + this.remainRain);
+    }
+
+    public void rainCloud(double coef) throws HydroException {
+        if (coef > 1) {
+            throw new HydroException("coef out of bound, must be <= 1");
+        }
+        this.remainRain += coef * nuage;
+        this.todayRain += coef * nuage;
+        this.nuage -= this.nuage * coef;
     }
 
     protected void thingsWithHydro() {
-        System.out.println("HYDROOOO");
-        this.makeItWet();
-
-        double[][] nextWaterLevel = new double[SIZE][SIZE];
+        this.rain();
         for (int x = 0; x < SIZE; x++) {
             for (int y = 0; y < SIZE; y++) {
-                nextWaterLevel[x][y] = 0;
+                this.infiltration(x, y);
+                this.evaporation(x, y);
             }
         }
-        for (int k = this.maxHeight; k >= this.minHeight; k--) {
-            for (int x = 0; x < SIZE; x++) {
-                for (int y = 0; y < SIZE; y++) {
-                    if (this.relief[x][y] == k) {
-                        this.infiltration(x, y);
-                        this.evaporation(x, y);
-                        this.ecoulement(nextWaterLevel, x, y);
-                    }
-                }
+        this.ecoulement();
+    }
+
+    private class EcoulementCalculeur {
+        private double[][] entree, sortie;
+        private int x, y;
+        private Point north, south, east, west;
+        private List<Point> sides;
+
+        public EcoulementCalculeur(double[][] entree, double[][] sortie, int x,
+                int y) {
+            this.entree = entree;
+            this.sortie = sortie;
+            this.x = x;
+            this.y = y;
+            this.north = new Point(x + 1, y);
+            this.south = new Point(x - 1, y);
+            this.east = new Point(x, y + 1);
+            this.west = new Point(x, y - 1);
+            this.sides = new ArrayList<Point>();
+        }
+
+        private double getPente(Point p) {
+            return getWaterAltitude(x, y) - getWaterAltitude(p.x, p.y);
+        }
+
+        private void fillSides() {
+            if (isInArea(north.x, north.y) && getPente(north) > 0) {
+                this.sides.add(north);
+            }
+            if (isInArea(south.x, south.y) && getPente(south) > 0) {
+                this.sides.add(south);
+            }
+            if (isInArea(east.x, east.y) && getPente(east) > 0) {
+                this.sides.add(east);
+            }
+            if (isInArea(west.x, west.y) && getPente(west) > 0) {
+                this.sides.add(west);
             }
         }
-        this.waterLevel = nextWaterLevel;
+
+        private boolean isInArea(int x, int y) {
+            if (x < 0) {
+                return false;
+            }
+            if (y < 0) {
+                return false;
+            }
+            if (x >= SIZE) {
+                return false;
+            }
+            if (y >= SIZE) {
+                return false;
+            }
+            return true;
+        }
+
+        public void calculate() {
+            this.fillSides();
+            double maxOut = 0;
+            for (Point p : this.sides) {
+                maxOut += calculateOut(p);
+            }
+            double coef = 1;
+            if (maxOut > waterLevel[x][y]) {
+                coef = waterLevel[x][y] / maxOut;
+            }
+            for (Point p : this.sides) {
+                entree[p.x][p.y] += calculateOut(p) * coef;
+                sortie[x][y] += calculateOut(p) * coef;
+            }
+        }
+
+        private double calculateOut(Point p) {
+            double pente = getPente(p);
+            return pente / 50;
+        }
+    }
+
+    public class HydroException extends Exception {
+        private static final long serialVersionUID = 1L;
+
+        public HydroException(String string) {
+            super(string);
+        }
     }
 }

@@ -16,19 +16,26 @@ public final class Ground {
     }
 
     public static double maxGroundWater(int g) {
+        double maxGroundWater = 0;
         switch (g) {
         case EARTH:
-            return 1;
+            maxGroundWater = 1;
+            break;
         case WATER:
-            return 0;
+            maxGroundWater = 0;
+            break;
         case ROCK:
-            return 0;
+            maxGroundWater = 0.001;
+            break;
         case GRASS:
-            return 0.9;
+            maxGroundWater = 0.9;
+            break;
         case SAND:
-            return 1.3;
+            maxGroundWater = 1.3;
+            break;
         default:
-            return 0;
+            maxGroundWater = 0;
         }
+        return maxGroundWater;
     }
 }

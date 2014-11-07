@@ -5,8 +5,8 @@ import java.util.List;
 
 import view.tools.WELogger;
 
+import model.entity.Entity;
 import model.world.area.EntityArea;
-import model.world.entity.Entity;
 import model.world.generator.Calque;
 import model.world.generator.WorldGenerator;
 
@@ -26,7 +26,8 @@ public class World {
         this.areas = new ArrayList<EntityArea>();
         for (int w = 0; w < this.width; w++) {
             for (int h = 0; h < this.height; h++) {
-                this.areas.add(new EntityArea(this, w * EntityArea.SIZE, h * EntityArea.SIZE));
+                this.areas.add(new EntityArea(this, w * EntityArea.SIZE, h
+                        * EntityArea.SIZE));
             }
         }
         new WorldGenerator(this).generateMap();
@@ -98,8 +99,8 @@ public class World {
     }
 
     public EntityArea getCentralArea() {
-        return this.getAreaPerPosition(this.width * EntityArea.SIZE / 2, this.height
-                * EntityArea.SIZE / 2);
+        return this.getAreaPerPosition(this.width * EntityArea.SIZE / 2,
+                this.height * EntityArea.SIZE / 2);
     }
 
     public void setAreas(List<EntityArea> areas) {
@@ -141,6 +142,7 @@ public class World {
             }
             a.calculateMaxHeight();
             a.calculateMinHeight();
+            a.applySeaLevel();
         }
         this.defineGround();
     }
@@ -148,10 +150,6 @@ public class World {
     private void defineGround() {
         for (int x = 0; x < this.width * EntityArea.SIZE; x++) {
             for (int y = 0; y < this.height * EntityArea.SIZE; y++) {
-                /*if (this.getAltitude(x, y) <= GenConfig.SEALEVEL) {
-                    this.setGround(x, y, Ground.WATER);
-                    continue;
-                }*/
                 int alt = getAltitude(x, y);
                 int penteX = 0;
                 int penteY = 0;

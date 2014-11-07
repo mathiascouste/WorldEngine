@@ -1,0 +1,50 @@
+## VALIDATION ##
+- SONAR
+- JUNIT
+- javadoc
+- vérification constance
+
+## VERSION 0.1 ##
+> modélisation
+- un monde en relief (discret)
+- une hydrologie fonctionnelle : atmosphérique, surface, sous-sols
+> validation
+
+## VERSION 0.2 ##
+> modélisation
+- modèle d'entité
+- flore (herbe/ plante / arbre)
+> validation
+
+## VERSION 0.3 ##
+> modélisation
+- faune herbivore (petit / moyen / grand)
+> validation
+
+## VERSION 0.4 ##
+> modélisation
+- faune carnivore (moyen / grand)
+	:: prendre en compte la "fuite" chez les herbivores
+> validation
+
+## VERSION 0.5 ##
+> modélisation
+- faune aérienne
+> validation
+
+## VERSION 0.6 ##
+> l'humain
+> validation
+
+## VERSION 0.7 ##
+> le groupe d'humain
+> validation
+
+## VERSION 0.8 ##
+> les constructions
+> validation
+
+## VERSION 0.9 ##
+> les factions
+> validation
+

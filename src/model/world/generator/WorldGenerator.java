@@ -4,10 +4,10 @@ import java.util.Random;
 
 import config.GenConfig;
 
+import model.entity.flora.Tree;
 import model.world.Ground;
 import model.world.World;
 import model.world.area.EntityArea;
-import model.world.entity.flora.Tree;
 
 public class WorldGenerator {
     private World world;
@@ -30,7 +30,6 @@ public class WorldGenerator {
 
         int size = this.world.getWidth() * EntityArea.SIZE;
         this.relief = new ReliefGenerator(5, 4, 0.5f, 4, size).generateRelief();
-        //ReliefGenerator.applyPyramid(this.relief);
         this.world.applyRelief(this.relief);
 
         this.generateEntity(rand);

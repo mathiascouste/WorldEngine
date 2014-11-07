@@ -1,8 +1,8 @@
 package test;
 
 import view.tools.WELogger;
-import model.world.entity.flora.Tree;
-import model.world.entity.Entity;
+import model.entity.Entity;
+import model.entity.flora.Tree;
 
 public class EntityTest {
 

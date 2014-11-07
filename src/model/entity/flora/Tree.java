@@ -1,4 +1,4 @@
-package model.world.entity.flora;
+package model.entity.flora;
 
 import java.awt.Graphics;
 import java.util.Random;
@@ -6,9 +6,9 @@ import java.util.Random;
 import view.tools.ImageManager;
 import view.tools.WELogger;
 
+import model.entity.Entity;
 import model.world.Ground;
 import model.world.area.EntityArea;
-import model.world.entity.Entity;
 
 public class Tree extends Entity {
     private static final double LIFEEXPECTANCY = 100.0;
