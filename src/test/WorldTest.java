@@ -18,11 +18,10 @@ public class WorldTest {
         WorldGenerator wG = new WorldGenerator(world);
         wG.generateMap();
         
+        
         AreaView aV = new AreaView(world);
 
         world.start();
-        Thread t = new Thread(world.getCentralArea());
-        t.start();
         aV.start();
         aV.setVisible(true);
         

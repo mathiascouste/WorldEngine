@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import config.GenConfig;
+import config.HydroConfig;
 
 import model.world.Ground;
 import model.world.World;
@@ -30,8 +31,8 @@ public class HydroArea extends ReliefArea {
     public void applySeaLevel() {
         for (int x = 0; x < SIZE; x++) {
             for (int y = 0; y < SIZE; y++) {
-                if (this.relief[x][y] <= GenConfig.SEALEVEL) {
-                    this.waterLevel[x][y] = GenConfig.SEALEVEL
+                if (this.relief[x][y] <= HydroConfig.SEALEVEL) {
+                    this.waterLevel[x][y] = HydroConfig.SEALEVEL
                             - this.relief[x][y];
                 }
             }
@@ -48,7 +49,7 @@ public class HydroArea extends ReliefArea {
                 }
                 g.setColor(new Color(0, 0, 255, transparency));
                 g.fillRect(x * size, y * size, size, size);
-                if (this.waterLevel[x][y] < 0) {
+                if (this.waterLevel[x][y] <= 0) {
                     transparency = (int) (255 * this.waterInGround[x][y] / Ground
                             .maxGroundWater(this.grid[x][y]));
                     g.setColor(new Color(255, 0, 0, transparency));
@@ -78,12 +79,14 @@ public class HydroArea extends ReliefArea {
 
     private void evaporation(int x, int y) {
         if (this.waterLevel[x][y] > 0) {
-            double max = 0.001;
+            double max = HydroConfig.EVAPORATION_MAX;
             double coef = 0;
             if (this.waterLevel[x][y] >= 1) {
-                coef = 0.25;
+                coef = HydroConfig.SURFACE_EVAPORATION_COEF;
             } else {
-                coef = 0.25 + 0.75 * (1 - this.waterLevel[x][y]);
+                coef = HydroConfig.SURFACE_EVAPORATION_COEF
+                        + (1 - HydroConfig.SURFACE_EVAPORATION_COEF)
+                        * (1 - this.waterLevel[x][y]);
             }
             double evaWater = max * coef;
             if (evaWater > this.waterLevel[x][y]) {
@@ -92,7 +95,8 @@ public class HydroArea extends ReliefArea {
             this.waterLevel[x][y] -= evaWater;
             this.nuage += evaWater;
         } else {
-            double evaGround = this.waterInGround[x][y] / 20;
+            double evaGround = this.waterInGround[x][y]
+                    * HydroConfig.SOL_EVAPORATION_COEF;
             this.waterInGround[x][y] -= evaGround;
             this.nuage += evaGround;
         }
@@ -127,7 +131,7 @@ public class HydroArea extends ReliefArea {
     }
 
     private double getWaterAltitude(int x, int y) {
-        if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) {
+        if (!isInArea(x, y)) {
             return GenConfig.MAX_HEIGHT;
         } else {
             return this.relief[x][y] + this.waterLevel[x][y];
@@ -149,7 +153,7 @@ public class HydroArea extends ReliefArea {
 
     private void rain() {
         if (this.remainRain > 0) {
-            double addo = this.todayRain / 50;
+            double addo = this.todayRain * HydroConfig.RAIN_PER_LOOP;
             this.remainRain -= addo;
             for (int x = 0; x < SIZE; x++) {
                 for (int y = 0; y < SIZE; y++) {
@@ -217,22 +221,6 @@ public class HydroArea extends ReliefArea {
             }
         }
 
-        private boolean isInArea(int x, int y) {
-            if (x < 0) {
-                return false;
-            }
-            if (y < 0) {
-                return false;
-            }
-            if (x >= SIZE) {
-                return false;
-            }
-            if (y >= SIZE) {
-                return false;
-            }
-            return true;
-        }
-
         public void calculate() {
             this.fillSides();
             double maxOut = 0;
@@ -241,7 +229,7 @@ public class HydroArea extends ReliefArea {
             }
             double coef = 1;
             if (maxOut > waterLevel[x][y]) {
-                coef = waterLevel[x][y] / maxOut;
+                coef *= waterLevel[x][y] / maxOut;
             }
             for (Point p : this.sides) {
                 entree[p.x][p.y] += calculateOut(p) * coef;
@@ -251,7 +239,7 @@ public class HydroArea extends ReliefArea {
 
         private double calculateOut(Point p) {
             double pente = getPente(p);
-            return pente / 50;
+            return pente * HydroConfig.ECOULEMENT_COEF;
         }
     }
 

@@ -42,6 +42,22 @@ public class Area {
                 && y >= this.posY && y < this.posY + EntityArea.SIZE;
     }
 
+    protected boolean isInArea(int x, int y) {
+        if (x < 0) {
+            return false;
+        }
+        if (y < 0) {
+            return false;
+        }
+        if (x >= SIZE) {
+            return false;
+        }
+        if (y >= SIZE) {
+            return false;
+        }
+        return true;
+    }
+
     public void setPosX(int posX) {
         this.posX = posX;
     }

@@ -8,10 +8,6 @@ public class GenConfig {
     public static final int LISSAGE = 7;
     public static final float PERSISTANCE = 0.5f;
     
-    // Hydro
-    public static final int SEALEVEL = 50;
-    public static final int SOURCEABONDANCE = 2;
-    
     //// World
     /// Flora
     public static final int MAX_TREE = 50;

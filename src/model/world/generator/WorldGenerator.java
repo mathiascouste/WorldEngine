@@ -4,12 +4,10 @@ import java.util.Random;
 
 import config.GenConfig;
 
-import model.entity.flora.Tree;
-import model.world.Ground;
 import model.world.World;
 import model.world.area.EntityArea;
 
-public class WorldGenerator {
+public class WorldGenerator extends ReliefGenerator {
     private World world;
     private Calque relief;
     private long seed;
@@ -17,6 +15,8 @@ public class WorldGenerator {
     private Calque water;
 
     public WorldGenerator(World world) {
+        super(GenConfig.FREQUENCE, GenConfig.OCTAVE, GenConfig.PERSISTANCE,
+                GenConfig.LISSAGE, world.getWidth() * EntityArea.SIZE);
         this.world = world;
         this.seed = new Random().nextLong();
     }
@@ -28,47 +28,8 @@ public class WorldGenerator {
     public void generateMap(long seed) {
         this.rand = new Random(this.seed);
 
-        int size = this.world.getWidth() * EntityArea.SIZE;
-        this.relief = new ReliefGenerator(5, 4, 0.5f, 4, size).generateRelief();
+        this.relief = generateRelief();
         this.world.applyRelief(this.relief);
-
-        this.generateEntity(rand);
-    }
-
-    private void generateEntity(Random rand) {
-        this.generateFlora(rand);
-    }
-
-    private void generateFlora(Random rand) {
-        for (EntityArea a : this.world.getAreas()) {
-            generateTree(rand, a);
-        }
-    }
-
-    private void generateTree(Random rand, EntityArea a) {
-        int maxTree = GenConfig.MAX_TREE;
-        int posX = a.getPosX(), posY = a.getPosY();
-        int cptOkGround = 0;
-        for (int x = posX; x < EntityArea.SIZE + posX; x++) {
-            for (int y = posY; y < EntityArea.SIZE + posY; y++) {
-                int ground = a.getGround(x, y);
-                if (ground == Ground.EARTH || ground == Ground.GRASS) {
-                    cptOkGround++;
-                }
-            }
-        }
-        double probaTree = ((double) maxTree) / ((double) cptOkGround);
-        for (int x = posX; x < EntityArea.SIZE + posX; x++) {
-            for (int y = posY; y < EntityArea.SIZE + posY; y++) {
-                int ground = a.getGround(x, y);
-                if ((ground == Ground.EARTH || ground == Ground.GRASS)
-                        && rand.nextFloat() <= probaTree) {
-                    Tree tree = new Tree(a, x + rand.nextDouble(), y
-                            + rand.nextDouble(), 0);
-                    a.addEntity(tree);
-                }
-            }
-        }
     }
 
     public World getWorld() {
